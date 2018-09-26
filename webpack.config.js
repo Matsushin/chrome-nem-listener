@@ -19,6 +19,12 @@ if (fileSystem.existsSync(secretsPath)) {
 }
 
 var options = {
+  target: 'web',
+  node: {
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty'
+  },
   entry: {
     popup: path.join(__dirname, "src", "js", "popup.js"),
     options: path.join(__dirname, "src", "js", "options.js"),
