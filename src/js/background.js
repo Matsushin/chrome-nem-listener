@@ -4,27 +4,41 @@ import '../img/icon-34.png'
 import {Address, ConfirmedTransactionListener, NEMLibrary, NetworkTypes} from "nem-library";
 NEMLibrary.bootstrap(NetworkTypes.TEST_NET);
 
+let confirmedTransactionListener;
+let connection;
 const address = localStorage.getItem("address");
-if (address != '') {
+if (address != null) {
     startNotification(address);
 }
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        startNotification(request.address);
-        sendResponse({
-            msg: "通知を開始しました!",
-            address: request.address
-        });
+        if (request.address == null) {
+            connection.unsubscribe();
+            sendResponse({
+                msg: "通知を停止しました"
+            });
+        } else {
+            startNotification(request.address);
+            sendResponse({
+                msg: "通知を開始しました!",
+                address: request.address
+            });
+        }
     }
 );
 
 function startNotification(address) {
-    const confirmedTransactionListener = new ConfirmedTransactionListener([
+    confirmedTransactionListener = new ConfirmedTransactionListener([
     {
         domain: '23.228.67.85'
     },
     ]).given(new Address(address));
-    confirmedTransactionListener.subscribe(res => {
+
+    if (connection != null) {
+        connection.unsubscribe();
+    }
+
+    connection = confirmedTransactionListener.subscribe(res => {
         const signerAddress = res.signer.address.value;
         if (address == res.recipient.value) {
             let amount = 0;

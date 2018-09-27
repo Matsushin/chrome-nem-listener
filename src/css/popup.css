@@ -2,3 +2,7 @@
     width: 300px;
     margin-bottom: 10px;
 }
+
+.hidden {
+    display: none;
+}

@@ -2,10 +2,16 @@ import "../css/popup.css";
 import hello from "./popup/example";
 
 let addressForm = document.getElementById("addressForm");
-addressForm.value = localStorage.getItem("address");
+const localAddress  = localStorage.getItem("address");
+const startButton = document.getElementById("startButton");
+const stopButton = document.getElementById("stopButton");
 
-let button = document.getElementById("startButton");
-button.addEventListener('click', function() {
+addressForm.value = localAddress;
+if (localAddress != null) {
+    stopButton.classList.remove("hidden");
+}
+
+startButton.addEventListener('click', function() {
     const address = addressForm.value;
     chrome.runtime.sendMessage({
         address: address
@@ -13,7 +19,17 @@ button.addEventListener('click', function() {
     function(response) {
         alert(response.msg);
         localStorage.setItem("address", response.address);
+        stopButton.classList.remove("hidden");
     });
 });
 
-//hello();
+stopButton.addEventListener('click', function() {
+    chrome.runtime.sendMessage({
+        address: null
+    },
+    function(response) {
+        alert(response.msg);
+        localStorage.removeItem('address');
+        stopButton.classList.add("hidden");
+    });
+});
