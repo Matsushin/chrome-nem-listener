@@ -57,7 +57,14 @@ function startNotification(address) {
             const options = {
                 body: `送金元：${signerAddress}`
             }
-            new Notification(title, options);
+            chrome.notifications.create(`NOTIFICATION_NAME_${res.transactionInfo.hash.data}`, {
+                type: 'basic',
+                iconUrl: '../icon-34.png',
+                title: `${amount} ${mosaicName}`,
+                contextMessage: '着金しました！',
+                message: `送金元：${signerAddress}`,
+                priority: 1
+            });
         } 
     }, err => {
         console.log(err);

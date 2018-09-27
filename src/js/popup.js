@@ -1,18 +1,17 @@
 import "../css/popup.css";
-import hello from "./popup/example";
 
 let addressForm = document.getElementById("addressForm");
 let localAddress;
 chrome.storage.local.get("address", function(value) {
     localAddress = value.address;
+    if (localAddress != null) {
+        addressForm.value = localAddress;
+        stopButton.classList.remove("hidden");
+    }
 });
+
 const startButton = document.getElementById("startButton");
 const stopButton = document.getElementById("stopButton");
-
-if (localAddress != null) {
-    addressForm.value = localAddress;
-    stopButton.classList.remove("hidden");
-}
 
 startButton.addEventListener('click', function() {
     const address = addressForm.value;
