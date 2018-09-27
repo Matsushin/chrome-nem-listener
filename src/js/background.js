@@ -1,5 +1,6 @@
-import '../img/icon-128.png'
 import '../img/icon-34.png'
+import '../img/icon-128.png'
+import '../img/icon-notification.png'
 
 import {Address, ConfirmedTransactionListener, NEMLibrary, NetworkTypes} from "nem-library";
 NEMLibrary.bootstrap(NetworkTypes.TEST_NET);
@@ -56,7 +57,7 @@ function startNotification(address) {
 
             chrome.notifications.create(`NOTIFICATION_NAME_${res.transactionInfo.hash.data}`, {
                 type: 'basic',
-                iconUrl: '../icon-34.png',
+                iconUrl: '../icon-notification.png',
                 title: `${amount} ${mosaicName}`,
                 contextMessage: '受け取りました！',
                 message: `送金元：${signerAddress}`,
