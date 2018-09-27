@@ -1,5 +1,5 @@
 {
-  "name": "Chrome NEM Listener",
+  "name": "NEM着金通知",
   "options_page": "options.html",
   "background": {
     "page": "background.html"
