@@ -53,15 +53,12 @@ function startNotification(address) {
                 amount = mosaic.quantity / 100;
                 mosaicName = `${mosaic.mosaicId.namespaceId}:${mosaic.mosaicId.name}`;
             }
-            const title = `${amount}${mosaicName} 受け取りました！`
-            const options = {
-                body: `送金元：${signerAddress}`
-            }
+
             chrome.notifications.create(`NOTIFICATION_NAME_${res.transactionInfo.hash.data}`, {
                 type: 'basic',
                 iconUrl: '../icon-34.png',
                 title: `${amount} ${mosaicName}`,
-                contextMessage: '着金しました！',
+                contextMessage: '受け取りました！',
                 message: `送金元：${signerAddress}`,
                 priority: 1
             });
