@@ -2,12 +2,15 @@ import "../css/popup.css";
 import hello from "./popup/example";
 
 let addressForm = document.getElementById("addressForm");
-const localAddress  = localStorage.getItem("address");
+let localAddress;
+chrome.storage.local.get("address", function(value) {
+    localAddress = value.address;
+});
 const startButton = document.getElementById("startButton");
 const stopButton = document.getElementById("stopButton");
 
-addressForm.value = localAddress;
 if (localAddress != null) {
+    addressForm.value = localAddress;
     stopButton.classList.remove("hidden");
 }
 
@@ -18,7 +21,7 @@ startButton.addEventListener('click', function() {
     },
     function(response) {
         alert(response.msg);
-        localStorage.setItem("address", response.address);
+        chrome.storage.local.set({ "address": response.address}, function() {});
         stopButton.classList.remove("hidden");
     });
 });
@@ -29,7 +32,7 @@ stopButton.addEventListener('click', function() {
     },
     function(response) {
         alert(response.msg);
-        localStorage.removeItem('address');
+        chrome.storage.local.remove("address", function() {});
         stopButton.classList.add("hidden");
     });
 });

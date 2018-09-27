@@ -6,7 +6,7 @@ NEMLibrary.bootstrap(NetworkTypes.TEST_NET);
 
 let confirmedTransactionListener;
 let connection;
-const address = localStorage.getItem("address");
+const address = chrome.storage.local.get("address", function() {});
 if (address != null) {
     startNotification(address);
 }
