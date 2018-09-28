@@ -3,14 +3,23 @@ import '../img/icon-128.png'
 import '../img/icon-notification.png'
 
 import {Address, ConfirmedTransactionListener, NEMLibrary, NetworkTypes} from "nem-library";
-NEMLibrary.bootstrap(NetworkTypes.TEST_NET);
+// Mainnet
+// NEMLibrary.bootstrap(NetworkTypes.MAIN_NET); 
+//const domain = 'jusan.nem.ninja'
+
+// Testnet
+NEMLibrary.bootstrap(NetworkTypes.TEST_NET); 
+const domain = '192.3.61.243' 
 
 let confirmedTransactionListener;
 let connection;
-const address = chrome.storage.local.get("address", function() {});
-if (address != null) {
-    startNotification(address);
-}
+chrome.storage.local.get("address", function(value) {
+    const localAddress = value.address;
+    if (localAddress != null) {
+        startNotification(localAddress);
+    }
+});
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.address == null) {
@@ -31,7 +40,7 @@ chrome.runtime.onMessage.addListener(
 function startNotification(address) {
     confirmedTransactionListener = new ConfirmedTransactionListener([
     {
-        domain: '23.228.67.85'
+        domain: domain
     },
     ]).given(new Address(address));
 
@@ -44,7 +53,7 @@ function startNotification(address) {
         if (address == res.recipient.value) {
             let amount = 0;
             let mosaicName = '';
-            if (res.mosaics == undefined) {
+            if (res._mosaics == undefined) {
                 // XEM
                 amount = res._xem.quantity / 1000000;
                 mosaicName = 'xem';
