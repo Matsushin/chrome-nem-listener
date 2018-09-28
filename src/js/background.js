@@ -4,12 +4,12 @@ import '../img/icon-notification.png'
 
 import {Address, ConfirmedTransactionListener, NEMLibrary, NetworkTypes} from "nem-library";
 // Mainnet
-// NEMLibrary.bootstrap(NetworkTypes.MAIN_NET); 
-//const domain = 'jusan.nem.ninja'
+NEMLibrary.bootstrap(NetworkTypes.MAIN_NET); 
+const domain = 'jusan.nem.ninja'
 
 // Testnet
-NEMLibrary.bootstrap(NetworkTypes.TEST_NET); 
-const domain = '192.3.61.243' 
+//NEMLibrary.bootstrap(NetworkTypes.TEST_NET); 
+//const domain = '192.3.61.243' 
 
 let confirmedTransactionListener;
 let connection;
