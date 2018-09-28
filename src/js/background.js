@@ -2,14 +2,14 @@ import '../img/icon-34.png'
 import '../img/icon-128.png'
 import '../img/icon-notification.png'
 
-import {Address, ConfirmedTransactionListener, NEMLibrary, NetworkTypes} from "nem-library";
+import {Address, MosaicHttp, ConfirmedTransactionListener, NEMLibrary, NetworkTypes} from "nem-library";
 // Mainnet
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET); 
 const domain = 'jusan.nem.ninja'
 
 // Testnet
-//NEMLibrary.bootstrap(NetworkTypes.TEST_NET); 
-//const domain = '192.3.61.243' 
+// NEMLibrary.bootstrap(NetworkTypes.TEST_NET); 
+// const domain = '192.3.61.243' 
 
 let confirmedTransactionListener;
 let connection;
@@ -52,28 +52,40 @@ function startNotification(address) {
         const signerAddress = res.signer.address.value;
         if (address == res.recipient.value) {
             let amount = 0;
-            let mosaicName = '';
+            let divisibility = 6;
+            const hash = res.transactionInfo.hash.data
             if (res._mosaics == undefined) {
                 // XEM
-                amount = res._xem.quantity / 1000000;
-                mosaicName = 'xem';
+                amount = res._xem.quantity / (10 ** divisibility);
+                notice(hash, amount, 'xem', signerAddress)
             } else {
                 // Mosaic
-                const mosaic = res._mosaics[0]
-                amount = mosaic.quantity / 100;
-                mosaicName = `${mosaic.mosaicId.namespaceId}:${mosaic.mosaicId.name}`;
+                const mosaic = res._mosaics[0];
+                const mosaicHttp = new MosaicHttp();
+                mosaicHttp.getAllMosaicsGivenNamespace(mosaic.mosaicId.namespaceId).subscribe(mosaicDefinitions => {
+                    mosaicDefinitions.forEach(function(mosaicDefinition, _index){
+                        if (mosaic.mosaicId.name == mosaicDefinition.id.name) {
+                            divisibility = mosaicDefinition.properties.divisibility;
+                        }
+                    });
+                    amount = mosaic.quantity / (10 ** divisibility);
+                    const mosaicName = `${mosaic.mosaicId.namespaceId}:${mosaic.mosaicId.name}`;
+                    notice(hash, amount, mosaicName, signerAddress)
+                });
             }
-
-            chrome.notifications.create(`NOTIFICATION_NAME_${res.transactionInfo.hash.data}`, {
-                type: 'basic',
-                iconUrl: '../icon-notification.png',
-                title: `${amount} ${mosaicName}`,
-                contextMessage: '受け取りました！',
-                message: `送金元：${signerAddress}`,
-                priority: 1
-            });
         } 
     }, err => {
         console.log(err);
+    });
+}
+
+function notice(hash, amount, mosaicName, signerAddress) {
+    chrome.notifications.create(`NOTIFICATION_NAME_${hash}`, {
+        type: 'basic',
+        iconUrl: '../icon-notification.png',
+        title: `${amount} ${mosaicName}`,
+        contextMessage: '受け取りました！',
+        message: `送金元：${signerAddress}`,
+        priority: 1
     });
 }
